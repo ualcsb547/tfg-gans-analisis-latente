@@ -1,5 +1,5 @@
 
-##### 1. An·lisis de Componentes Principales (PCA) #####
+##### 1. An√°lisis de Componentes Principales (PCA) #####
 
 # 1. Leemos el archivo CSV
 datos_w <- read.csv("mis_vectores_stylegan (3).csv")
@@ -11,13 +11,13 @@ dim(datos_w)
 head(datos_w[, 1:5])
 
 # Usamos center=TRUE para centrar los datos, y scale=FALSE porque 
-# todas las variables del espacio latente ya est·n en la misma escala.
+# todas las variables del espacio latente ya est√°n en la misma escala.
 pca_result <- prcomp(datos_w, center = TRUE, scale. = FALSE)
 
 
 
 # Extraemos la primera componente principal o PC1
-# Esto es un vector de 512 n˙meros que representa el cambio m·s grande
+# Esto es un vector de 512 n√∫meros que representa el cambio m√°s grande
 direccion_pca1 <- pca_result$rotation[, 1] # como queremos la PC1 cogemos la primera colunna
 
 # Segundo componente principal o PC2
@@ -44,10 +44,10 @@ barplot(varianza_explicada[1:20] * 100,
 # Comparativa PC1 y PC2
 # Dibujamos los 1000 puntos usando el PC1 en el eje X y el PC2 en el eje Y
 plot(pca_result$x[,1], pca_result$x[,2], 
-     main = "DistribuciÛn del Espacio Latente (PC1 vs PC2)",
-     xlab = "PC1 (GÈnero / Fondo)",
+     main = "Distribuci√≥n del Espacio Latente (PC1 vs PC2)",
+     xlab = "PC1 (G√©nero / Fondo)",
      ylab = "PC2 (Pelo / Gafas)",
-     pch = 16, # Forma del punto (cÌrculo relleno)
+     pch = 16, # Forma del punto (c√≠rculo relleno)
      col = rgb(0.2, 0.4, 0.6, alpha = 0.5)) # Color azul semitransparente para ver solapamientos
 
 
@@ -59,29 +59,29 @@ library(ggplot2)
 # 1. Leemos los datos que trajimos de Python
 datos <- read.csv("datos_supervisados_tfg.csv")
 
-# 2. Definimos quÈ columnas son nuestras etiquetas
+# 2. Definimos qu√© columnas son nuestras etiquetas
 atributos <- c("smile", "eyeglasses", "gender")
 
-# 3. Bucle para calcular la direcciÛn de cada uno
+# 3. Bucle para calcular la direcci√≥n de cada uno
 for (attr in atributos) {
-  cat("Calculando la direcciÛn para:", attr, "...\n")
+  cat("Calculando la direcci√≥n para:", attr, "...\n")
   
-  # Creamos la fÛrmula din·micamente (ej: smile ~ w_0 + w_1 + ...)
+  # Creamos la f√≥rmula din√°micamente (ej: smile ~ w_0 + w_1 + ...)
   # Primero limpiamos el dataset para este atributo
   columnas_w <- paste0("w_", 0:511)
   datos_sub <- datos[, c(columnas_w, attr)] # datos de cada variable
   
   # Entrenamos la SVM con Kernel Lineal 
-  modelo <- svm(as.formula(paste(attr, "~ .")), #ponemos los atributos en funciÛn de todas las dem·s columnas
+  modelo <- svm(as.formula(paste(attr, "~ .")), #ponemos los atributos en funci√≥n de todas las dem√°s columnas
                 data = datos_sub, 
-                kernel = "linear", #debe encontrar una lÌnea recta en el espacio latente
-                type = "eps-regression") #regression por ser etiquetas con n˙meros continuos
+                kernel = "linear", #debe encontrar una l√≠nea recta en el espacio latente
+                type = "eps-regression") #regression por ser etiquetas con n√∫meros continuos
 
   # Extraemos el vector normal
-  # La fÛrmula matem·tica es: w = sum(alpha_i * y_i * support_vectors_i)
+  # La f√≥rmula matem√°tica es: w = sum(alpha_i * y_i * support_vectors_i)
   direccion <- t(modelo$coefs) %*% modelo$SV  
-  # los vectores de soporte (SV) son como las "caras lÌmite", donde ese rasgo aparece exagerado 
-  # para m·s y para menos, como por ejemplo, no sonreÌr nada y sonreÌr muchÌsimo.
+  # los vectores de soporte (SV) son como las "caras l√≠mite", donde ese rasgo aparece exagerado 
+  # para m√°s y para menos, como por ejemplo, no sonre√≠r nada y sonre√≠r much√≠simo.
   
   # 4. Guardamos el resultado en un CSV individual
   nombre_archivo <- paste0("direccion_svm_", attr, ".csv")
@@ -91,34 +91,34 @@ for (attr in atributos) {
 }
 print("PROCESO FINALIZADO")
 
-# Hagamos un gr·fico
+# Hagamos un gr√°fico
 # Separamos solo las coordenadas de las 1000 caras
 caras_w <- as.matrix(datos[, 1:512])
 
-# Cargamos la "br˙jula" de la sonrisa que calculaste con la SVM
+# Cargamos la "br√∫jula" de la sonrisa que calculaste con la SVM
 dir_sonrisa <- read.csv("direccion_svm_smile.csv")
 
-# Proyectamos las caras sobre la flecha (°as.numeric() evita el error de tamaÒo!)
+# Proyectamos las caras sobre la flecha (¬°as.numeric() evita el error de tama√±o!)
 proyecciones <- caras_w %*% as.numeric(dir_sonrisa)
 
 # 4. CREAMOS EL DATAFRAME 
 df_grafico <- data.frame(
   Proyeccion_SVM = proyecciones,
-  Etiqueta = ifelse(datos$smile > 0, "SonrÌe (Score > 0)", "No SonrÌe (Score < 0)")
+  Etiqueta = ifelse(datos$smile > 0, "Sonr√≠e (Score > 0)", "No Sonr√≠e (Score < 0)")
 )
 
 ggplot(df_grafico, aes(x = Etiqueta, y = Proyeccion_SVM, fill = Etiqueta)) +
   geom_violin(alpha = 0.7, trim = FALSE, color = "darkgray") +
   geom_boxplot(width = 0.15, fill = "white", color = "black", outlier.shape = NA) +
-  scale_fill_manual(values = c("SonrÌe (Score > 0)" = "#2E8B57", 
-                               "No SonrÌe (Score < 0)" = "#CD5C5C")) +
+  scale_fill_manual(values = c("Sonr√≠e (Score > 0)" = "#2E8B57", 
+                               "No Sonr√≠e (Score < 0)" = "#CD5C5C")) +
   theme_minimal() +
   labs(
-    title = "DistribuciÛn de la ProyecciÛn SVM (Gr·fico de ViolÌn)",
-    subtitle = "An·lisis de la densidad y medianas para el atributo 'Sonrisa'",
-    x = "ClasificaciÛn Original",
-    y = "PuntuaciÛn en la DirecciÛn SVM",
-    fill = "CategorÌa:"
+    title = "Distribuci√≥n de la Proyecci√≥n SVM (Gr√°fico de Viol√≠n)",
+    subtitle = "An√°lisis de la densidad y medianas para el atributo 'Sonrisa'",
+    x = "Clasificaci√≥n Original",
+    y = "Puntuaci√≥n en la Direcci√≥n SVM",
+    fill = "Categor√≠a:"
   ) +
   theme(
     plot.title = element_text(face = "bold", size = 14),
@@ -129,36 +129,36 @@ ggplot(df_grafico, aes(x = Etiqueta, y = Proyeccion_SVM, fill = Etiqueta)) +
 library(ggplot2)
 
 ggplot(df_grafico, aes(x = Proyeccion_SVM, fill = Etiqueta)) +
-  # Usamos barras de histograma en lugar de lÌneas continuas
+  # Usamos barras de histograma en lugar de l√≠neas continuas
   geom_histogram(position = "identity", alpha = 0.6, bins = 40, color = "white") +
-  # La lÌnea de separaciÛn (el hiperplano SVM)
+  # La l√≠nea de separaci√≥n (el hiperplano SVM)
   geom_vline(xintercept = 0, linetype = "dashed", color = "black", linewidth = 1) +
-  scale_fill_manual(values = c("SonrÌe (Score > 0)" = "#2E8B57", 
-                               "No SonrÌe (Score < 0)" = "#CD5C5C")) +
+  scale_fill_manual(values = c("Sonr√≠e (Score > 0)" = "#2E8B57", 
+                               "No Sonr√≠e (Score < 0)" = "#CD5C5C")) +
   theme_minimal() +
   labs(
-    title = "SeparaciÛn del Atributo mediante SVM (Histograma)",
-    subtitle = "Frecuencia absoluta de im·genes seg˙n su distancia al hiperplano",
+    title = "Separaci√≥n del Atributo mediante SVM (Histograma)",
+    subtitle = "Frecuencia absoluta de im√°genes seg√∫n su distancia al hiperplano",
     x = "Distancia al Hiperplano SVM",
-    y = "N˙mero de Im·genes (Frecuencia)",
-    fill = "ClasificaciÛn:"
+    y = "N√∫mero de Im√°genes (Frecuencia)",
+    fill = "Clasificaci√≥n:"
   ) +
   theme(plot.title = element_text(face = "bold"))
-##### 3. GR¡FICO INTEGRADOR: PCA + Etiquetas Supervisadas #####
+##### 3. GR√ÅFICO INTEGRADOR: PCA + Etiquetas Supervisadas #####
 
-# Veamos ahora si las conclusiones que sacamos mirando las im·genes tenÌan algo de sentido
-# Cargamos la librerÌa de gr·ficos avanzados
+# Veamos ahora si las conclusiones que sacamos mirando las im√°genes ten√≠an algo de sentido
+# Cargamos la librer√≠a de gr√°ficos avanzados
 library(ggplot2)
 
-cat("Generando gr·fico integrador PCA + SVM...\n")
+cat("Generando gr√°fico integrador PCA + SVM...\n")
 
 # Juntamos los mundos: Las coordenadas del PCA y las etiquetas de la IA 
 # IMPORTANTE: Esto asume que 'datos_w' y 'datos' tienen las mismas 1000 caras en el mismo orden
 df_scatter <- data.frame(
   PC1 = pca_result$x[, 1],
   PC2 = pca_result$x[, 2],
-  # Creamos la etiqueta de color bas·ndonos en la columna 'smile' de tu segundo CSV
-  Etiqueta1 = ifelse(datos$smile > 0, "SonrÌe (Score > 0)", "No SonrÌe (Score < 0)"),
+  # Creamos la etiqueta de color bas√°ndonos en la columna 'smile' de tu segundo CSV
+  Etiqueta1 = ifelse(datos$smile > 0, "Sonr√≠e (Score > 0)", "No Sonr√≠e (Score < 0)"),
   Etiqueta2 = ifelse(datos$gender > 0, "Hombre (Score > 0)", "Mujer (Score < 0)"),
   Etiqueta3 = ifelse(datos$eyeglasses > 0, "Gafas (Score > 0)", "No Gafas (Score < 0)")
  
@@ -167,30 +167,30 @@ df_scatter <- data.frame(
 # SONRISA
 ggplot(df_scatter, aes(x = PC1, y = PC2, color = Etiqueta1)) +
   geom_point(alpha = 0.6, size = 2) + 
-  scale_color_manual(values = c("SonrÌe (Score > 0)" = "#2E8B57", 
-                                "No SonrÌe (Score < 0)" = "#CD5C5C")) +
+  scale_color_manual(values = c("Sonr√≠e (Score > 0)" = "#2E8B57", 
+                                "No Sonr√≠e (Score < 0)" = "#CD5C5C")) +
   theme_minimal() +
   labs(
-    title = "DistribuciÛn de la Sonrisa en el Espacio Principal (PCA)",
-    subtitle = "ProyecciÛn de las 1000 im·genes generadas",
+    title = "Distribuci√≥n de la Sonrisa en el Espacio Principal (PCA)",
+    subtitle = "Proyecci√≥n de las 1000 im√°genes generadas",
     x = "PC1",
     y = "PC2",
-    color = "ClasificaciÛn:"
+    color = "Clasificaci√≥n:"
   ) +
   theme(plot.title = element_text(face = "bold"))
 
-# G…NERO
+# G√âNERO
 ggplot(df_scatter, aes(x = PC1, y = PC2, color = Etiqueta2)) +
   geom_point(alpha = 0.6, size = 2) + 
   scale_color_manual(values = c("Hombre (Score > 0)" = "#2E8B57", 
                                 "Mujer (Score < 0)" = "#CD5C5C")) +
   theme_minimal() +
   labs(
-    title = "DistribuciÛn de el GÈnero en el Espacio Principal (PCA)",
-    subtitle = "ProyecciÛn de las 1000 im·genes generadas",
+    title = "Distribuci√≥n de el G√©nero en el Espacio Principal (PCA)",
+    subtitle = "Proyecci√≥n de las 1000 im√°genes generadas",
     x = "PC1",
     y = "PC2",
-    color = "ClasificaciÛn:"
+    color = "Clasificaci√≥n:"
   ) +
   theme(plot.title = element_text(face = "bold"))
 
@@ -201,10 +201,10 @@ ggplot(df_scatter, aes(x = PC1, y = PC2, color = Etiqueta3)) +
                                 "No Gafas (Score < 0)" = "#CD5C5C")) +
   theme_minimal() +
   labs(
-    title = "DistribuciÛn de Gafas en el Espacio Principal (PCA)",
-    subtitle = "ProyecciÛn de las 1000 im·genes generadas",
+    title = "Distribuci√≥n de Gafas en el Espacio Principal (PCA)",
+    subtitle = "Proyecci√≥n de las 1000 im√°genes generadas",
     x = "PC1",
     y = "PC2",
-    color = "ClasificaciÛn:"
+    color = "Clasificaci√≥n:"
   ) +
   theme(plot.title = element_text(face = "bold"))
