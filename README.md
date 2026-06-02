@@ -8,10 +8,8 @@ El flujo de trabajo implementa un procedimiento híbrido que aprovecha las forta
 * **R:** Empleado para el análisis estadístico profundo, incluyendo el cálculo del Análisis de Componentes Principales (PCA) y el entrenamiento de Máquinas de Vectores de Soporte (SVM) para la extracción de direcciones geométricas.
 
 ## Estructura del Repositorio
-* `python_colab/`: Notebooks y scripts para la instanciación del modelo y extracción de datos.
-* `r_scripts/`: Código fuente para la aplicación de PCA, entrenamiento de las SVM y visualización de las fronteras de decisión.
-* `data/`: Archivos tabulares con las coordenadas del espacio latente y las etiquetas de los atributos. *(Nota: Por restricciones de tamaño, los pesos del modelo original no se incluyen aquí).*
-* `docs/`: Gráficos, diagramas de dispersión y figuras generadas resultantes del análisis.
+* `python_colab/`: Notebooks y scripts para la instanciación del modelo y extracción de datos, y archivos tabulares con las coordenadas del espacio latente y las etiquetas de los atributos..
+* `r_scripts/`: Código fuente para la aplicación de PCA, entrenamiento de las SVM y visualización de las fronteras de decisión. También hay gráficos, diagramas de dispersión y figuras generadas resultantes del análisis.
 
 ## Guía de Ejecución
 1. **Fase Generativa:** Ejecutar los notebooks de la carpeta `python_colab/` para generar las muestras y exportar las coordenadas latentes en formato `.csv`.
