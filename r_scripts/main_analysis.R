@@ -23,11 +23,12 @@ direccion_pca1 <- pca_result$rotation[, 1] # como queremos la PC1 cogemos la pri
 # Segundo componente principal o PC2
 direccion_pca2 <- pca_result$rotation[, 2]
 
+# Tercera componente principal o PC3
 direccion_pca3 <- pca_result$rotation[, 3]
 
 # Guardamos los vectores para usarlos en Colab
-write.csv(as.data.frame(direccion_pca1), "direccion_pca11.csv", row.names = FALSE)
-write.csv(as.data.frame(direccion_pca2), "direccion_pca21.csv", row.names = FALSE)
+write.csv(as.data.frame(direccion_pca1), "direccion_pca1.csv", row.names = FALSE)
+write.csv(as.data.frame(direccion_pca2), "direccion_pca2.csv", row.names = FALSE)
 write.csv(as.data.frame(direccion_pca3), "direccion_pca3.csv", row.names = FALSE)
 
 
@@ -48,7 +49,7 @@ plot(pca_result$x[,1], pca_result$x[,2],
      xlab = "PC1 (Género / Fondo)",
      ylab = "PC2 (Pelo / Gafas)",
      pch = 16, # Forma del punto (círculo relleno)
-     col = rgb(0.2, 0.4, 0.6, alpha = 0.5)) # Color azul semitransparente para ver solapamientos
+     col = rgb(0.2, 0.4, 0.6, alpha = 0.5)) # Color azul mediotransparente para ver solapamientos
 
 
 
@@ -56,7 +57,7 @@ plot(pca_result$x[,1], pca_result$x[,2],
 
 library(e1071)
 library(ggplot2)
-# 1. Leemos los datos que trajimos de Python
+# 1. Leemos los datos que cogemos de Python
 datos <- read.csv("datos_supervisados_tfg.csv")
 
 # 2. Definimos qué columnas son nuestras etiquetas
@@ -95,7 +96,7 @@ print("PROCESO FINALIZADO")
 # Separamos solo las coordenadas de las 1000 caras
 caras_w <- as.matrix(datos[, 1:512])
 
-# Cargamos la "brújula" de la sonrisa que calculaste con la SVM
+# Cargamos la "brújula" de la sonrisa que calculamos con la SVM
 dir_sonrisa <- read.csv("direccion_svm_smile.csv")
 
 # Proyectamos las caras sobre la flecha (¡as.numeric() evita el error de tamaño!)
@@ -144,16 +145,17 @@ ggplot(df_grafico, aes(x = Proyeccion_SVM, fill = Etiqueta)) +
     fill = "Clasificación:"
   ) +
   theme(plot.title = element_text(face = "bold"))
+
 ##### 3. GRÁFICO INTEGRADOR: PCA + Etiquetas Supervisadas #####
 
 # Veamos ahora si las conclusiones que sacamos mirando las imágenes tenían algo de sentido
 # Cargamos la librería de gráficos avanzados
 library(ggplot2)
 
-cat("Generando gráfico integrador PCA + SVM...\n")
+cat("Generando gráfico integrador PCA + Etiquetas...\n")
 
-# Juntamos los mundos: Las coordenadas del PCA y las etiquetas de la IA 
-# IMPORTANTE: Esto asume que 'datos_w' y 'datos' tienen las mismas 1000 caras en el mismo orden
+# Juntamos las coordenadas del PCA y las etiquetas
+# Esto asume que 'datos_w' y 'datos' tienen las mismas 1000 caras en el mismo orden
 df_scatter <- data.frame(
   PC1 = pca_result$x[, 1],
   PC2 = pca_result$x[, 2],
